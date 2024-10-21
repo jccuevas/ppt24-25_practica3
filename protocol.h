@@ -27,6 +27,9 @@
 #define SD  "QUIT"
 #define ECHO "ECHO"
 
+#define MAIL "MAIL FROM:"// Comando para enviar el remitente
+#define RCPT "RCPT TO:"// Comando para enviar el destinatario
+
 
 // RESPUESTAS A COMANDOS DE APLICACION
 #define OK  "OK"
