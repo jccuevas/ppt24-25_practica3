@@ -29,7 +29,7 @@
 
 #define MAIL "MAIL FROM:"// Comando para enviar el remitente
 #define RCPT "RCPT TO:"// Comando para enviar el destinatario
-
+#define DATA "DATA"
 
 // RESPUESTAS A COMANDOS DE APLICACION
 #define OK  "OK"
