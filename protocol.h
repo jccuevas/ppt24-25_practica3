@@ -22,35 +22,33 @@
 #endif
 
 // COMANDOS DE APLICACION
-#define SC "USER"
-#define PW "PASS"
-#define SD  "QUIT"
-#define ECHO "ECHO"
+#define QUIT "QUIT"
+#define HELO "HELO"
+#define EHLO "EHLO"
 
 #define MAIL "MAIL FROM:"// Comando para enviar el remitente
 #define RCPT "RCPT TO:"// Comando para enviar el destinatario
 #define DATA "DATA"
 
 // RESPUESTAS A COMANDOS DE APLICACION
-#define OK  "OK"
-#define ER  "ER"
+#define SC220   "220" //Saludo
+#define SC221   "221" //QUIT
+#define SC250	"250" //Respuesta afirmativa a comandos HELO, MAIL y RCPT
+#define SC354	"354" //Respuesta afirmativa a comando DATA
 
 //FIN DE RESPUESTA
 #define CRLF "\r\n"
 
 //ESTADOS
 #define S_INIT 0
-#define S_USER 1
-#define S_PASS 2
-#define S_DATA 3
-#define S_QUIT 4
+#define S_HELO 1
+#define S_MAIL 2
+#define S_RCPT 3
+#define S_DATA 4
+#define S_MSG  5
+#define S_QUIT 6
 
 
 //PUERTO DEL SERVICIO
-#define TCP_SERVICE_PORT	60000
+#define TCP_SERVICE_PORT	25
 
-// NOMBRE Y CLAVE AUTORIZADOS
-// Nota: esto no se debe hacer nunca, es solamente para simplificar el funcionamiento del
-// servidor, el cual debería almacenar estos datos en una base de datos de forma segura.
-#define USER		"user" 
-#define PASSWORD	"1234"

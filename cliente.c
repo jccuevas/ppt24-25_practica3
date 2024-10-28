@@ -39,7 +39,8 @@ int main(int* argc, char* argv[])
 	char option;
 	int ipversion = AF_INET;//IPv4 por defecto
 	char ipdest[256];
-	char default_ip4[16] = "127.0.0.1";
+	//char default_ip4[16] = "127.0.0.1"; //CASA
+	char default_ip4[16] = "150.214.179.118"; //CLASE
 	char default_ip6[64] = "::1";
 
 	WORD wVersionRequested;
@@ -124,39 +125,21 @@ int main(int* argc, char* argv[])
 					case S_INIT:
 						// Se recibe el mensaje de bienvenida
 						break;
-					case S_USER:
+					case S_HELO:
 						// establece la conexion de aplicacion 
-						printf("CLIENTE> Introduzca el usuario (enter para salir): ");
+						printf("CLIENTE> Introduzca el dominio local (enter para salir): ");
 						gets_s(input, sizeof(input));
 						if (strlen(input) == 0) {
-							sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", SD, CRLF);
+							sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", QUIT, CRLF);
 							estado = S_QUIT;
 						}
 						else {
-							sprintf_s(buffer_out, sizeof(buffer_out), "%s %s%s", SC, input, CRLF);
+							sprintf_s(buffer_out, sizeof(buffer_out), "%s %s%s", HELO, input, CRLF);
 						}
 						break;
-					case S_PASS:
-						printf("CLIENTE> Introduzca la clave (enter para salir): ");
-						gets_s(input, sizeof(input));
-						if (strlen(input) == 0) {
-							sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", SD, CRLF);
-							estado = S_QUIT;
-						}
-						else
-							sprintf_s(buffer_out, sizeof(buffer_out), "%s %s%s", PW, input, CRLF);
+					case S_MAIL:
 						break;
-					case S_DATA:
-						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): ");
-						gets_s(input, sizeof(input));
-						if (strlen(input) == 0) {
-							sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", SD, CRLF);
-							estado = S_QUIT;
-						}
-						else {
-							sprintf_s(buffer_out, sizeof(buffer_out), "%s %s%s", ECHO, input, CRLF);
-						}
-						break;
+					
 
 					}
 
@@ -182,15 +165,45 @@ int main(int* argc, char* argv[])
 						}
 					}
 					else {
+						char statusCode[1024] = "";
+
 						buffer_in[recibidos] = 0x00;
-						printf(buffer_in);
-						if (estado != S_DATA && strncmp(buffer_in, OK, 2) == 0){
-							estado++;
+						printf("RECIBIDO %d bytes> %s",recibidos, buffer_in);
+
+						//Robustez -> comprobar que la longitud de buffer_in es almenos 3
+						strncpy_s(statusCode,sizeof(statusCode), buffer_in, 3);
+						statusCode[3] = 0;
+						
+						switch (estado) {
+						case S_INIT:
+							if (strcmp(statusCode, SC220) == 0) {
+								estado = S_HELO;
+							}
+							else {
+								estado = S_QUIT;
+								continue;
+							}
+
+							break;
+
+						case S_HELO:
+							if (strcmp(statusCode, SC250) == 0) {
+								estado = S_MAIL;
+							}
+							else {
+								estado = S_QUIT;
+								continue;
+							}
+							break;
+
+
+
 						}
-						//Si la autenticación no es correcta se vuelve al estado S_USER
-						if (estado == S_PASS && strncmp(buffer_in, OK, 2) != 0) {
-							estado = S_USER;
-						}
+
+
+
+				
+
 					}
 
 				} while (estado != S_QUIT);
