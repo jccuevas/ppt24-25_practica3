@@ -24,7 +24,7 @@
 // COMANDOS DE APLICACION
 #define QUIT "QUIT"
 #define HELO "HELO"
-#define EHLO "EHLO"
+
 
 #define MAIL "MAIL FROM:"// Comando para enviar el remitente
 #define RCPT "RCPT TO:"// Comando para enviar el destinatario
