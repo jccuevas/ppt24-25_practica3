@@ -35,6 +35,7 @@
 #define SC221   "221" //QUIT
 #define SC250	"250" //Respuesta afirmativa a comandos HELO, MAIL y RCPT
 #define SC354	"354" //Respuesta afirmativa a comando DATA
+#define SC550	"550" //Destinatario no existe
 
 //FIN DE RESPUESTA
 #define CRLF "\r\n"

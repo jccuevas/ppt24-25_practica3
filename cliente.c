@@ -42,6 +42,7 @@ int main(int* argc, char* argv[])
 	//char default_ip4[16] = "127.0.0.1"; //CASA
 	char default_ip4[16] = "150.214.179.118"; //CLASE
 	char default_ip6[64] = "::1";
+	int recipientOk = 0;
 
 	WORD wVersionRequested;
 	WSADATA wsaData;
@@ -138,9 +139,17 @@ int main(int* argc, char* argv[])
 						}
 						break;
 					case S_MAIL:
+						recipientOk = 0;
+						break;
+					case S_RCPT:
+						break;
+					case S_DATA:
+						sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", DATA, CRLF);
 						break;
 					
-
+					case S_MSG:
+						sprintf_s(buffer_out, sizeof(buffer_out), "subject:Práctica 3\r\n\r\nEstoy con la práctica 3\r\n.\r\n");
+						break;
 					}
 
 					if (estado != S_INIT) {
@@ -163,8 +172,7 @@ int main(int* argc, char* argv[])
 							printf("CLIENTE> Conexión con el servidor cerrada\r\n");
 							estado = S_QUIT;
 						}
-					}
-					else {
+					} else {
 						char statusCode[1024] = "";
 
 						buffer_in[recibidos] = 0x00;
@@ -188,23 +196,72 @@ int main(int* argc, char* argv[])
 
 						case S_HELO:
 							if (strcmp(statusCode, SC250) == 0) {
-								estado = S_MAIL;
+								estado = S_MAIL;//Transición al estado MAIL
 							}
-							else {
+							else {//Error al iniciar la sesión de SMTP
+								printf("Error al enviar el comando HELO");
 								estado = S_QUIT;
 								continue;
 							}
 							break;
 
+						case S_MAIL:
+							if (strcmp(statusCode, SC250) == 0) {
+								estado = S_RCPT;//Transición al estado RCPT
+							}
+							else {//Error al enviar el remitente
+								printf("Error al enviar el comando MAIL");
+								estado = S_QUIT;
+								continue;
+							}
+							break;
+						case S_RCPT:
+							if (strcmp(statusCode, SC250) == 0) {
+								recipientOk = 1;
+								//añadir variable que indique que ya hemos enviado AL MENOS UN destino correcto
+								//pregunto si quiere otro
+									//no hago nada
+								//else (no quiere otro)
+								estado = S_DATA;//Transición al estado RCPT
+							} else if (strcmp(statusCode, SC550) == 0) {
+								//pregunto si quiere otro
+									//no hago nada
+								//else (no quiere otro)
+								    // Si ya hay uno correcto
+									 estado = S_DATA;//Transición al estado RCPT
+									// si no hay correcto
+									 //seguimos en el mismo estado.
+							}
+							else {//Error al enviar el remitente
+								printf("Error al enviar el comando MAIL");
+								estado = S_QUIT;
+								continue;
+							}
+							break;
+						case S_DATA:
+							if (strcmp(statusCode, SC354) == 0) {
+								estado = S_MSG;//Transición al estado de preparación del cuerpo del mensaje
+							}
+							else {//Error al enviar el remitente
+								printf("Error al enviar el comando DATA");
+								estado = S_QUIT;
+								continue;
+							}
+							break;
+						case S_MSG:
+							if (strcmp(statusCode, SC250) == 0) {
+								estado = S_MAIL;//Transición al estado MAIL
+							}
+							else {//Error al enviar el remitente
+								printf("Error al enviar el cuerpo del correo");
+								estado = S_QUIT;
+								continue;
+							}
+							break;
 
+						}//switch
 
-						}
-
-
-
-				
-
-					}
+					}//recv correcto
 
 				} while (estado != S_QUIT);
 			}
