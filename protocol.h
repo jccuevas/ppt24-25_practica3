@@ -53,3 +53,6 @@
 //PUERTO DEL SERVICIO
 #define TCP_SERVICE_PORT	25
 
+//Cabeceras del correo
+#define SUBJECT "subject:"
+
