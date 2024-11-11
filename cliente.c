@@ -285,6 +285,7 @@ int main(int* argc, char* argv[])
 								if (strcmp(statusCode, SC354) == 0) {
 									estado = S_MSG;//Transición al estado de preparación del cuerpo del mensaje
 									msgOn = 1; 
+									statusMail = 1;
 								}
 								else {//Error al enviar el remitente
 									printf("Error al enviar el comando DATA");
