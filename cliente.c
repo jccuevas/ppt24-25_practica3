@@ -180,7 +180,7 @@ int main(int* argc, char* argv[])
 							sprintf_s(buffer_out, sizeof(buffer_out), "%s%s%s",SUBJECT,input, CRLF);
 							statusMail++;
 							break;
-
+							//Con la última cabecera concatenar el CRLF
 						case 4:
 							printf("Escriba una nueva línea de correo o un punto para finalizar");
 							gets_s(input, sizeof(input));//Cadena a enviar
@@ -190,6 +190,10 @@ int main(int* argc, char* argv[])
 							sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", input, CRLF);
 
 						}
+						break;
+
+					case S_RSET:
+						sprintf_s(buffer_out, sizeof(buffer_out), "%s%s", RSET, CRLF);
 						break;
 					}
 
@@ -271,9 +275,13 @@ int main(int* argc, char* argv[])
 										//no hago nada
 									//else (no quiere otro)
 										// Si ya hay uno correcto
-									estado = S_DATA;//Transición al estado RCPT
-									// si no hay correcto
-									 //seguimos en el mismo estado.
+											//¿Son los datos correctos?
+												//Sí
+													estado = S_DATA;//Transición al estado RCPT
+												//No
+												// estado = S_RSET
+										// si no hay correcto
+											//seguimos en el mismo estado.
 								}
 								else {//Error al enviar el remitente
 									printf("Error al enviar el comando RCPT");
@@ -282,6 +290,9 @@ int main(int* argc, char* argv[])
 								}
 								break;
 							case S_DATA:
+								//OTRA OPCIÓN
+								//controlar si envié RSET o DATA
+								//if(DATA?)
 								if (strcmp(statusCode, SC354) == 0) {
 									estado = S_MSG;//Transición al estado de preparación del cuerpo del mensaje
 									msgOn = 1; 
@@ -292,6 +303,8 @@ int main(int* argc, char* argv[])
 									estado = S_QUIT;
 									continue;
 								}
+								//NO era DATA
+								  //Compruebo la respuesta al RSET y cambio a S_MAIL
 								break;
 							case S_MSG:
 								if (strcmp(statusCode, SC250) == 0) {
@@ -303,7 +316,10 @@ int main(int* argc, char* argv[])
 									continue;
 								}
 								break;
-
+							case S_RSET:
+								//Comprobar la respuesta
+								//Cambiar estado S_MAIL
+								break;
 							}//switch
 
 						}//recv correcto

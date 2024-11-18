@@ -29,6 +29,8 @@
 #define MAIL "MAIL FROM:"// Comando para enviar el remitente
 #define RCPT "RCPT TO:"// Comando para enviar el destinatario
 #define DATA "DATA"
+#define RSET "RSET"
+
 
 // RESPUESTAS A COMANDOS DE APLICACION
 #define SC220   "220" //Saludo
@@ -36,6 +38,7 @@
 #define SC250	"250" //Respuesta afirmativa a comandos HELO, MAIL y RCPT
 #define SC354	"354" //Respuesta afirmativa a comando DATA
 #define SC550	"550" //Destinatario no existe
+
 
 //FIN DE RESPUESTA
 #define CRLF "\r\n"
@@ -49,6 +52,7 @@
 #define S_MSG  5
 #define S_QUIT 6
 
+#define S_RSET 7
 
 //PUERTO DEL SERVICIO
 #define TCP_SERVICE_PORT	25
