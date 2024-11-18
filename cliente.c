@@ -205,7 +205,7 @@ int main(int* argc, char* argv[])
 									 // bucle salte hasta la comprobación del mismo.
 						}
 					}
-					if (msgOn==0) {
+					if (msgOn==0) {//Evita recibir cuando estás enviando líneas del correo
 						recibidos = recv(sockfd, buffer_in, 512, 0);
 						if (recibidos <= 0) {
 							DWORD error = GetLastError();
